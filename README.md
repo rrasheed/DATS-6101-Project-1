@@ -26,4 +26,4 @@ Gregory Smith's web scrape of VGChartz Video Game Sales extended with scrape fro
 16. Rating - The ESRB ratings
 
 ## Methods
-
+Write something about EDA of Video game data
