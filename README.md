@@ -5,9 +5,9 @@ This data was pulled from Rush Kirubi's Kaggle repository called "Video Game Sal
 URL to kaggle page: https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings/home
 
 ## Data
-Motivated by Gregory Smith's web scrape of VGChartz Video Games Sales, this data set simply extends the number of variables with another web scrape from Metacritic. Unfortunately, there are missing observations as Metacritic only covers a subset of the platforms. Also, a game may not have all the observations of the additional variables discussed below. Complete cases are ~ 6,900
+Gregory Smith's web scrape of VGChartz Video Game Sales extended with scrape from Metacritic. There are missing observations as Metacritic only covers a subset of the platforms. Thus, game may not have all the observations of the additional variables discussed below. Complete cases are ~ 6,900
 
-### Attributes:
+#### Attributes:
 Name - Name of the game
 
 Platform - Console on which the game is running
@@ -27,7 +27,6 @@ JP_Sales - Game sales in Japan (in millions of units)
 Other_Sales - Game sales in the rest of the world excluing NA, EU, and JP
 
 Global_Sales - Total sales in the world (in millions of units)
-
 
 Critic_score - Aggregate score compiled by Metacritic staff
 
