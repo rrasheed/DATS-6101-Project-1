@@ -24,3 +24,6 @@ Gregory Smith's web scrape of VGChartz Video Game Sales extended with scrape fro
 14. User_count - Number of users who gave the user_score
 15. Developer - Party responsible for creating the game
 16. Rating - The ESRB ratings
+
+## Methods
+
