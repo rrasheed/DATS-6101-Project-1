@@ -50,8 +50,42 @@ EDA
 #vg summary
 summary(vg)
 ```
-
 ```{r}
-#
+#boxplot NA_Sales
+boxplot(vg$NA_Sales)
+#remove major outliers
+NA_Sales_no_mo <- vg$NA_Sales[!vg$NA_Sales %in% boxplot.stats(vg$NA_Sales)$out]
+#boxplot NA_Sales_no_mo
+boxplot(NA_Sales_no_mo)
+```
+```{r}
+#histogram NA_Sales_no_mo
+hist(NA_Sales_no_mo, breaks = 10)
+```
+```{r}
+#boxplot EU_Sales
+boxplot(vg$EU_Sales)
+#remove major outliers
+EU_Sales_no_mo <- vg$EU_Sales[!vg$EU_Sales %in% boxplot.stats(vg$EU_Sales)$out]
+#boxplot EU_Sales_no_mo
+boxplot(EU_Sales_no_mo)
+```
+```{r}
+#histogram NA_Sales_no_mo
+hist(EU_Sales_no_mo, breaks = 10)
+```
+```{r}
+#boxplot JP_Sales
+boxplot(vg$JP_Sales)
+#remove major outliers
+JP_Sales_no_mo <- vg$JP_Sales[!vg$JP_Sales %in% boxplot.stats(vg$JP_Sales)$out]
+#boxplot NA_Sales_no_mo
+boxplot(JP_Sales_no_mo)
+```
+```{r}
+#histogram NA_Sales_no_mo
+hist(JP_Sales_no_mo, breaks = 10)
+```
+
 ```
 
