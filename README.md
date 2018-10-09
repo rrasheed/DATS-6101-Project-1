@@ -1,6 +1,4 @@
-# Project 1
-## DATS 6101 Introduction to Data Science
-## Mary Gibbs and Rayhaan Rasheed
+# Project 1 - DATS 6101 Introduction to Data Science - Mary Gibbs and Rayhaan Rasheed
 
 ## Overview
 This project explores a video game ratings and sales data set. 
@@ -21,3 +19,4 @@ Link: https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings/home
 
 ## Methods
 EDA
+Model
