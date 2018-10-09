@@ -1,0 +1,57 @@
+---
+title: "Project 1"
+authors: Mary Gibbs and Rayhaan Rasheed
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+Research Question: Do certain genres of video games sell better in different regions (North America, Europe, and Japan)?
+
+H0: Each genre of video game does sell the same across different regions (North America, Europe, Japan).
+
+HA: Each genre of video game does not sell the same across different regions (North America, Europe, Japan).
+
+Packages
+```{r}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(plyr)
+```
+
+Read in data
+```{r}
+video_games <- fread("video_games.csv")
+```
+
+Check data
+```{r}
+str(video_games)
+```
+
+Clean data
+```{r}
+#create data frame with columns of interest
+vg <- video_games[, c(1, 4, 6:8, 10, 11, 13)]
+#correctly classify variables
+vg$Critic_Score <- as.numeric(vg$Critic_Score)
+vg$User_Score <- as.numeric(vg$User_Score)
+#remove NA rows
+vg <- na.omit(vg)
+#multiply User_Score by 10 to match Critic_Score 
+vg$User_Score <- (vg$User_Score)*10
+#check data 
+str(vg)
+```
+
+EDA
+```{r}
+#vg summary
+summary(vg)
+```
+
+```{r}
+#
+```
+
