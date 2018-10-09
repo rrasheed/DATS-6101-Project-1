@@ -18,5 +18,5 @@ Link: https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings/home
 8. User_Score: score by Metacritic subscribers (out of 10)
 
 ## Methods
-EDA . 
+EDA<br/>
 Model
