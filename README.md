@@ -4,7 +4,7 @@
 This project explores a video game ratings and sales data set. 
 
 ## Data
-The data comes from Video Game Sales with Ratings by Rush Kirubi on Kaggle. 
+The data comes from Video Game Sales with Ratings by Rush Kirubi on Kaggle.  
 Link: https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings/home
 
 #### Attributes
