@@ -1,6 +1,6 @@
 # Project 1
-## DATS 6101 Introduction to Data Science
-## Mary Gibbs and Rayhaan Rasheed
+# DATS 6101 Introduction to Data Science
+# Mary Gibbs and Rayhaan Rasheed
 
 ## Overview
 This project explores a video game ratings and sales data set. 
