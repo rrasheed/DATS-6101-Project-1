@@ -62,6 +62,7 @@ boxplot(NA_Sales_no_mo)
 #histogram NA_Sales_no_mo
 hist(NA_Sales_no_mo, breaks = 10)
 ```
+
 ```{r}
 #boxplot EU_Sales
 boxplot(vg$EU_Sales)
@@ -70,10 +71,12 @@ EU_Sales_no_mo <- vg$EU_Sales[!vg$EU_Sales %in% boxplot.stats(vg$EU_Sales)$out]
 #boxplot EU_Sales_no_mo
 boxplot(EU_Sales_no_mo)
 ```
+
 ```{r}
-#histogram NA_Sales_no_mo
+#histogram EU_Sales_no_mo
 hist(EU_Sales_no_mo, breaks = 10)
 ```
+
 ```{r}
 #boxplot JP_Sales
 boxplot(vg$JP_Sales)
@@ -82,10 +85,14 @@ JP_Sales_no_mo <- vg$JP_Sales[!vg$JP_Sales %in% boxplot.stats(vg$JP_Sales)$out]
 #boxplot NA_Sales_no_mo
 boxplot(JP_Sales_no_mo)
 ```
+
 ```{r}
-#histogram NA_Sales_no_mo
+#histogram JP_Sales_no_mo
 hist(JP_Sales_no_mo, breaks = 10)
 ```
+
+```{r}
+#split points and outliers into two different data frames
 
 ```
 
