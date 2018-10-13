@@ -93,6 +93,16 @@ hist(JP_Sales_no_mo, breaks = 10)
 
 ```{r}
 #split points and outliers into two different data frames
+#calculate IQRs
+NA_Sales_IQR <- IQR(vg$NA_Sales)
+EU_Sales_IQR <- IQR(vg$EU_Sales)
+JP_Sales_IQR <- IQR(vg$JP_Sales)
+#upper bound outliers
+NA_Sales_threshold <- 1.5*NA_Sales_IQR
+EU_Sales_threshold <- 1.5*EU_Sales_IQR
+JP_Sales_threshold <- 1.5*JP_Sales_IQR
+#split data frame into two data frames (lower and upper)
 
 ```
+
 
