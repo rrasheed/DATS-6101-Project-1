@@ -6,11 +6,17 @@ editor_options:
   chunk_output_type: inline
 ---
 
+Project Overview
+----------------
+
 Data Source: https://www.kaggle.com/noriuk/us-educational-finances
 
-Research Question: Is there a significant linear relationship between school expenditure and 4th and 8th grade math test scores from 2015 to 2015?
+Research Question: Is there a significant linear relationship between school expenditure and 4th and 8th grade average math scores from 2015 to 2015?
 H0: B1 = 0 
 HA: B1 != 0
+
+Data Preparation
+----------------
 
 Packages
 ```{r}
@@ -58,100 +64,102 @@ df$test_year <- as.factor(df$test_year)
 str(df)
 ```
 
-EDA
+Exploratory Data Analysis
+-------------------------
 
 Summary
 ```{r}
-#get summary of df
+#summarize df
 summary(df)
 ```
 
-Graphs
-
-Compare 4th and 8th grade average math test scores over time
+Boxplot to check for outliers
 ```{r}
-df_4 <- df[df$test_year == 4]
-df_4_test_mean <- aggregate(df_4[, 5], list(df_4$year), mean)
-df_8 <- df[df$test_year == 8]
-df_8_test_mean <- aggregate(df_8[, 5], list(df_8$year), mean)
-#need to work on
+#divide graph area into two columns
+par(mfrow = c(1, 2))  
+#boxplot total expenditure and average math scores
+boxplot(df$total_expenditure, main = "Total Expenditure")  
+boxplot(df$avg_score, main = "Average Math Scores")
+#toal expenditure has some outliers
+#remove total expenditure outliers 
+te_outliers <- boxplot(df$total_expenditure, plot = FALSE)$out
+df <- df[!df$total_expenditure %in% te_outliers]
+#boxplot of total expenditure (no outliers)
+boxplot(df$total_expenditure, main = "Total Expenditure (No Outliers)")
 ```
 
-Compare average math test scores and total expenditure
+Density plot to check normal distribution
 ```{r}
-#scatter plot of 4th grade average math test scores vs. total expenditure
+#divide graph area into two columns
+par(mfrow = c(1, 2))  
+#density plot total expenditure and average math scores
+plot(density(df$total_expenditure), main = "Total Expenditure", ylab = "Frequency", col = "darkolivegreen3")
+polygon(density(df$total_expenditure), col = "darkolivegreen3")
+plot(density(df$avg_score), main = "Average Math Scores", ylab = "Frequency", col = "deepskyblue2")
+polygon(density(df$avg_score), col = "deepskyblue2")
+#total expenditure left skew
+#average math scores bimodal
+#check average math scores bimodal due to grade
+df_4 <- df[df$test_year == 4]
+df_8 <- df[df$test_year == 8]
+#divide graph area into two columns
+par(mfrow = c(1, 2))  
+#density plot 4th grade average math scores and 8th grade average math scores
+plot(density(df_4$avg_score), main = "4th Grade Average Math Scores", ylab = "Frequency", col = "indianred3")
+polygon(density(df_4$avg_score), col = "indianred3")
+plot(density(df_8$avg_score), main = "8th Grade Average Math Scores", ylab = "Frequency", col = "darkslateblue")
+polygon(density(df_8$avg_score), col = "darkslateblue")
+#average math scores bimodal due to grade
+#treat 4th grade average math scores and 8th grade average math scores separate
+```
+
+Correlation 
+```{r}
+#correlation total expenditure and 4th grade average math scores
+sprintf("total_expenditure_4 correlation: %f", cor(df_4$total_expenditure, df_4$avg_score))
+#weak relationshup between total expenditure and 4th grade average math scores
+#correlation total expenditure and 8th grade average math scores
+sprintf("total_expenditure_8 correlation: %f", cor(df_8$total_expenditure, df_8$avg_score))
+#weak relationship between total expenditure and 8th grade average math scores
+```
+
+Scatter plot 4th grade average math scores vs. total expenditure
+```{r}
+#scatter plot 4th grade average math scores vs. total expenditure
 ggplot(df_4, aes(x = total_expenditure, y = avg_score)) +
       geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE) + 
+      geom_smooth(method = lm, se = FALSE, color = "indianred3") + 
       ggtitle("4th Grade Average Math Test Scores vs. Total Expenditure") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
+      xlab("Total Expenditure") + 
       ylab("Average Score")
 ```
+
+Scatter plot 8th grade average math scores vs. total expenditure  
 ```{r}
-#scatter plot of 8th grade average math test scores vs. total expenditure
+#scatter plot 8th grade average math scores vs. total expenditure
 ggplot(df_8, aes(x = total_expenditure, y = avg_score)) +
       geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE) + 
+      geom_smooth(method = lm, se = FALSE, color = "darkslateblue") + 
       ggtitle("8th Grade Average Math Test Scores vs. Total Expenditure") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
-      ylab("Average Score")
-```
-```{r}
-#scatter plot of 4th and 8th grade average math test scores vs. total expenditure
-ggplot(df, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE) + 
-      ggtitle("4th and 8th Average Math Test Scores vs. Total Expenditure") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
+      xlab("Total Expenditure") + 
       ylab("Average Score")
 ```
 
-Compare average math test scores and total expenditure (<$20,000,000)
+Models
+------
+
+Linear regression of 4th grade average math scores vs. total expenditure
 ```{r}
-#scatter plot of 4th grade average math test scores vs. total expenditure (<$20,000,000)
-df_4_te_sub <- df_4[df_4$total_expenditure < 20000000]
-ggplot(df_4_te_sub, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE) + 
-      ggtitle("4th Grade Average Math Test Scores vs. Total Expenditure (<$20,000,000)") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
-      ylab("Average Score")
-```
-```{r}
-#scatter plot of 8th grade average math test scores vs. total expenditure (<$20,000,000)
-df_8_te_sub <- df_8[df_8$total_expenditure < 20000000]
-ggplot(df_8_te_sub, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE) + 
-      ggtitle("8th Grade Average Math Test Scores vs. Total Expenditure (<$20,000,000)") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
-      ylab("Average Score")
-```
-```{r}
-#scatter plot of 4th and 8th grade average math test scores vs. total expenditure (<$20,000,000)
-df_te_sub <- df[df$total_expenditure < 20000000]
-ggplot(df_te_sub, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE) + 
-      ggtitle("4th and 8th Grade Average Math Test Scores vs. Total Expenditure (<$20,000,000)") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
-      ylab("Average Score")
+#linear regression 4th grade average math scores vs. total expenditure 
+lm_df_4 <- lm(avg_score ~ total_expenditure, data = df_4)
+summary(lm_df_4)
 ```
 
-Model
+Linear regression of 8th grade average math scores vs. total expenditure
 ```{r}
-#linear regression for 4th grade average math test scores vs. total_expenditure (<$20,000,000)
-lm_4_te_sub <- lm(avg_score ~ total_expenditure, data = df_4_te_sub)
-summary(lm_4_te_sub)
-```
-```{r}
-#linear regression for 8th grade average math test scores vs. total_expenditure (<$20,000,000)
-lm_8_te_sub <- lm(avg_score ~ total_expenditure, data = df_8_te_sub)
-summary(lm_8_te_sub)
+#linear regression 8th grade average math test scores vs. total expenditure
+lm_df_8 <- lm(avg_score ~ total_expenditure, data = df_8)
+summary(lm_df_8)
 ```
