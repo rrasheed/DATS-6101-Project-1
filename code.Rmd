@@ -6,103 +6,74 @@ editor_options:
   chunk_output_type: inline
 ---
 
-Research Question: Do certain genres of video games sell better in different regions (North America, Europe, and Japan)?
+Data Source: https://www.kaggle.com/noriuk/us-educational-finances
 
-H0: Each genre of video game does sell the same across different regions (North America, Europe, Japan).
-
-HA: Each genre of video game does not sell the same across different regions (North America, Europe, Japan).
+Research Question: Is there a significant linear relationship between school expenditure and 4th and 8th grade math test scores from 2000 to 2015?
+H0: B1 = 0 
+HA: B1 != 0
 
 Packages
 ```{r}
 library(data.table)
 library(dplyr)
 library(ggplot2)
+library(ggvis)
+library(grid)
 library(plyr)
+library(VIM)
 ```
 
 Read in data
 ```{r}
-video_games <- fread("video_games.csv")
+finances <- fread("finances.csv")
+scores <- fread("scores.csv")
 ```
 
 Check data
 ```{r}
-str(video_games)
+str(finances)
+str(scores)
 ```
 
 Clean data
 ```{r}
-#create data frame with columns of interest
-vg <- video_games[, c(1, 4, 6:8, 10, 11, 13)]
-#correctly classify variables
-vg$Critic_Score <- as.numeric(vg$Critic_Score)
-vg$User_Score <- as.numeric(vg$User_Score)
-#remove NA rows
-vg <- na.omit(vg)
-#multiply User_Score by 10 to match Critic_Score 
-vg$User_Score <- (vg$User_Score)*10
-#check data 
-str(vg)
+#choose columns of interest
+finances <- finances[, c(1, 2, 4, 8)]
+scores <- scores[, c(1:4)]
+#select 2000 to 2015
+finances <- finances[finances$YEAR > 2004 & finances$YEAR < 2016]
+scores <- scores[scores$YEAR > 2004 & scores$YEAR < 2016]
+#select mathematics
+scores <- scores[scores$TEST_SUBJECT == 'Mathematics']
+#join finances and scores on year and state
+df <- merge(finances, scores, by = c("YEAR", "STATE"))
+#make column names lowercase
+df <- setnames(df, tolower(names(df)))
+#remove rows with avg_score = "-" and avg_score = "‡"
+df <- df[df$avg_score != "—" & df$avg_score != "‡"]
+#change avg_score data type
+df$avg_score <- as.numeric(df$avg_score, digits = 7)
+#check df 
+str(df)
 ```
 
 EDA
+
+Summary
 ```{r}
-#vg summary
-summary(vg)
+#get summary of df
+summary(df)
 ```
+Graphs
 ```{r}
-#boxplot NA_Sales
-boxplot(vg$NA_Sales)
-#remove major outliers
-NA_Sales_no_mo <- vg$NA_Sales[!vg$NA_Sales %in% boxplot.stats(vg$NA_Sales)$out]
-#boxplot NA_Sales_no_mo
-boxplot(NA_Sales_no_mo)
-```
-```{r}
-#histogram NA_Sales_no_mo
-hist(NA_Sales_no_mo, breaks = 10)
+#scatter plot of avg_score vs. total_expenditure
 ```
 
+Model
 ```{r}
-#boxplot EU_Sales
-boxplot(vg$EU_Sales)
-#remove major outliers
-EU_Sales_no_mo <- vg$EU_Sales[!vg$EU_Sales %in% boxplot.stats(vg$EU_Sales)$out]
-#boxplot EU_Sales_no_mo
-boxplot(EU_Sales_no_mo)
-```
-
-```{r}
-#histogram EU_Sales_no_mo
-hist(EU_Sales_no_mo, breaks = 10)
-```
-
-```{r}
-#boxplot JP_Sales
-boxplot(vg$JP_Sales)
-#remove major outliers
-JP_Sales_no_mo <- vg$JP_Sales[!vg$JP_Sales %in% boxplot.stats(vg$JP_Sales)$out]
-#boxplot NA_Sales_no_mo
-boxplot(JP_Sales_no_mo)
-```
-
-```{r}
-#histogram JP_Sales_no_mo
-hist(JP_Sales_no_mo, breaks = 10)
-```
-
-```{r}
-#split points and outliers into two different data frames
-#calculate IQRs
-NA_Sales_IQR <- IQR(vg$NA_Sales)
-EU_Sales_IQR <- IQR(vg$EU_Sales)
-JP_Sales_IQR <- IQR(vg$JP_Sales)
-#upper bound outliers
-NA_Sales_threshold <- 1.5*NA_Sales_IQR
-EU_Sales_threshold <- 1.5*EU_Sales_IQR
-JP_Sales_threshold <- 1.5*JP_Sales_IQR
-#split data frame into two data frames (lower and upper)
 
 ```
+
+
 
 
