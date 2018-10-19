@@ -11,11 +11,11 @@ Project Overview
 
 Data Source: https://www.kaggle.com/noriuk/us-educational-finances
 
-Research Question: Is there a significant linear relationship between school expenditure and 4th/8th grade average math scores from 2005 to 2015?
+Research Question: Is there a significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015?
 
 Hypotheses:
-H0: There is no significant linear relationship between school expenditure and 4th/8th grade average math scores from 2005 to 2015. B1 = 0. 
-HA: There is a significant linear relationship between school expenditure and 4th/8th grade average math scores from 2005 to 2015. B1 != 0.
+H0: There is no significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015. B1 = 0. 
+HA: There is a significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015. B1 != 0.
 
 Data Preparation
 ----------------
