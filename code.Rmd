@@ -11,11 +11,11 @@ Project Overview
 
 Data Source: https://www.kaggle.com/noriuk/us-educational-finances
 
-Research Question: Is there a significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015?
+Research Question: Is there a significant relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015?
 
 Hypotheses:
-H0: There is no significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015. B1 = 0. 
-HA: There is a significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015. B1 != 0.
+H0: There is no significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015. β1 = 0. 
+HA: There is a significant linear relationship between school expenditure and 4th/8th grade average math scores in the US from 2005 to 2015. β1 ≠ 0.
 
 Data Preparation
 ----------------
@@ -30,6 +30,7 @@ library(ggplot2)
 library(ggvis)
 library(grid)
 library(plyr)
+library(psych)
 library(stats)
 library(VIM)
 ```
@@ -71,7 +72,12 @@ str(df)
 Exploratory Data Analysis
 -------------------------
 
-Summary
+Descriptive statistics
+```{r}
+#describe df
+describe(df[, 3:5])
+```
+
 ```{r}
 #summarize df
 summary(df)
@@ -123,6 +129,64 @@ plot(density(df_8$avg_score), main = "8th Grade Average Math Scores", ylab = "Fr
 polygon(density(df_8$avg_score), col = "goldenrod1")
 #average math scores are bimodal due to grade level differences
 #treat 4th grade average math scores and 8th grade average math scores separate
+
+#Shapiro-Wilk normality test
+shapiro.test(df$total_revenue)
+shapiro.test(df$total_expenditure)
+shapiro.test(df_4$avg_score)
+shapiro.test(df_8$avg_score)
+#total revenue, total expenditure, 4th grade average math scores, and 8th grade average math scores have p values < 0.05, samples do not come from a normal distribution
+```
+
+Look at linearity and homoscedasticity
+```{r}
+#scatter plot of 4th grade average math scores vs. total expenditure
+ggplot(df_4, aes(x = total_expenditure, y = avg_score)) +
+      geom_point(shape = 1) +    
+      geom_smooth(method = lm, se = FALSE, color = "indianred3") + 
+      ggtitle("4th Grade Average Math Test Scores vs. Total Expenditure") + 
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      xlab("Total Expenditure") + 
+      ylab("Average Score")
+#possible linearity and homoscedasticity
+```
+
+```{r}
+#scatter plot of 8th grade average math scores vs. total expenditure
+ggplot(df_8, aes(x = total_expenditure, y = avg_score)) +
+      geom_point(shape = 1) +    
+      geom_smooth(method = lm, se = FALSE, color = "goldenrod1") + 
+      ggtitle("8th Grade Average Math Test Scores vs. Total Expenditure") + 
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      xlab("Total Expenditure") + 
+      ylab("Average Score")
+#possible linearity and homoscedasticity
+```
+
+```{r}
+#scatter plot of 4th grade average math scores vs. (total revenue - total expenditure) 
+df_4$tr_sub_te <- df_4$total_revenue - df_4$total_expenditure
+ggplot(df_4, aes(x = tr_sub_te, y = avg_score)) +
+      geom_point(shape = 1) +    
+      geom_smooth(method = lm, se = FALSE, color = "darkseagreen3") + 
+      ggtitle("4th Grade Average Math Test Scores vs. (Total Revenue - Total Expenditure)") + 
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      xlab("Total Revenue - Total Expenditure") + 
+      ylab("Average Score")
+#no linearity and possible homoscedasticity
+```
+
+```{r}
+#scatter plot of 8th grade average math scores vs. (total revenue - total expenditure) 
+df_8$tr_sub_te <- df_8$total_revenue - df_8$total_expenditure
+ggplot(df_8, aes(x = tr_sub_te, y = avg_score)) +
+      geom_point(shape = 1) +    
+      geom_smooth(method = lm, se = FALSE, color = "forestgreen") + 
+      ggtitle("8th Grade Average Math Test Scores vs. (Total Revenue - Total Expenditure)") + 
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      xlab("Total Revenue - Total Expenditure") + 
+      ylab("Average Score")
+#no linearity and possible homoscedasticity
 ```
 
 Look at independence
@@ -150,53 +214,6 @@ corrplot(df_cor_8, method = "square", addCoef.col = "black", number.digits = 4, 
 #weak positive relationships between total revenue and average score and total expenditure and average score
 ```
 
-Look at linearity 
-```{r}
-#scatter plot of 4th grade average math scores vs. total expenditure
-ggplot(df_4, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "indianred3") + 
-      ggtitle("4th Grade Average Math Test Scores vs. Total Expenditure") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure") + 
-      ylab("Average Score")
-```
-
-```{r}
-#scatter plot of 8th grade average math scores vs. total expenditure
-ggplot(df_8, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "goldenrod1") + 
-      ggtitle("8th Grade Average Math Test Scores vs. Total Expenditure") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure") + 
-      ylab("Average Score")
-```
-
-```{r}
-#scatter plot of 4th grade average math scores vs. (total revenue - total expenditure) 
-df_4$tr_sub_te <- df_4$total_revenue - df_4$total_expenditure
-ggplot(df_4, aes(x = tr_sub_te, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "darkseagreen3") + 
-      ggtitle("4th Grade Average Math Test Scores vs. (Total Revenue - Total Expenditure)") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Revenue - Total Expenditure") + 
-      ylab("Average Score")
-```
-
-```{r}
-#scatter plot of 8th grade average math scores vs. (total revenue - total expenditure) 
-df_8$tr_sub_te <- df_8$total_revenue - df_8$total_expenditure
-ggplot(df_8, aes(x = tr_sub_te, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "forestgreen") + 
-      ggtitle("8th Grade Average Math Test Scores vs. (Total Revenue - Total Expenditure)") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Revenue - Total Expenditure") + 
-      ylab("Average Score")
-```
-
 Models
 ------
 
@@ -205,16 +222,17 @@ Linear regression of 4th grade average math scores vs. total expenditure
 #linear regression 4th grade average math scores vs. total expenditure 
 lm_df_4_te <- lm(avg_score ~ total_expenditure, data = df_4)
 summary(lm_df_4_te)
-#coefficients - intercept p value < 0.05 and slope p value < 0.05, reject H0
+#residuals - not symmetric, model bias
+#coefficients - intercept and slope have p values < 0.05, significant linear relationship between school expenditure and 4th grade average math scores
 #multiple R-squared - 5.659% of the variance in 4th grade average math scores can be explained by school expenditure, poor model
 #F-statistic - p value < 0.05, model outperforms randomness
 
 #diagnostic plots - check residuals
 par(mfrow = c(2, 2))
 plot(lm_df_4_te)
-#linearity (yes) - the residuals vs fitted plot does not appear to have a fitted pattern and the red line is approximately horizontal at zero 
-#normality (yes) - the normal Q-Q plot appears to approximately follow a straight line
-#homoscedasticity (yes) - the scale-Location plot points are spread equally and the red line is approximately horizontal
+#linearity - the residuals vs fitted plot might have a fitted pattern and the red line is approximately horizontal at zero 
+#normality - the normal Q-Q plot appears to approximately follow a straight line
+#homoscedasticity - the scale-Location plot points are skewed to the left and the red line has a slight negative slope
 ```
 
 Linear regression of 8th grade average math scores vs. total expenditure
@@ -222,14 +240,15 @@ Linear regression of 8th grade average math scores vs. total expenditure
 #linear regression 8th grade average math test scores vs. total expenditure
 lm_df_8_te <- lm(avg_score ~ total_expenditure, data = df_8)
 summary(lm_df_8_te)
-#coefficients - intercept p value < 0.05 and slope p value < 0.05, reject H0
+#residuals - not symmetric, model bias
+#coefficients - intercept and slope have p values < 0.05, significant linear relationship between school expenditure and 8th grade average math scores
 #multiple R-squared - 3.93% of the variance in 8th grade average math scores can be explained by school expenditure, poor model
 #F-statistic - p value < 0.05, model outperforms randomness
 
 #diagnostic plots - check residuals
 par(mfrow = c(2, 2))
 plot(lm_df_8_te)
-#linearity (yes) - the residuals vs fitted plot does not appear to have a fitted pattern and the red line is approximately horizontal at zero 
-#normality (yes) - the normal Q-Q plot appears to approximately follow a straight line
-#homoscedasticity (yes) - the scale-Location plot points are spread equally and the red line is approximately horizontal
+#linearity - the residuals vs fitted plot might have a fitted pattern and the red line is approximately horizontal at zero 
+#normality - the normal Q-Q plot appears to approximately follow a straight line
+#homoscedasticity - the scale-Location plot points are skewed to the left and the red line has a slight negative slope
 ```
