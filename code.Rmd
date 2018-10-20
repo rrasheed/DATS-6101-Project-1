@@ -168,7 +168,7 @@ ggplot(df_8, aes(x = total_expenditure, y = avg_score)) +
 df_4$tr_sub_te <- df_4$total_revenue - df_4$total_expenditure
 ggplot(df_4, aes(x = tr_sub_te, y = avg_score)) +
       geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "darkseagreen3") + 
+      geom_smooth(method = lm, se = FALSE, color = "indianred3") + 
       ggtitle("4th Grade Average Math Test Scores vs. (Total Revenue - Total Expenditure)") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
       xlab("Total Revenue - Total Expenditure") + 
@@ -181,7 +181,7 @@ ggplot(df_4, aes(x = tr_sub_te, y = avg_score)) +
 df_8$tr_sub_te <- df_8$total_revenue - df_8$total_expenditure
 ggplot(df_8, aes(x = tr_sub_te, y = avg_score)) +
       geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "forestgreen") + 
+      geom_smooth(method = lm, se = FALSE, color = "goldenrod1") + 
       ggtitle("8th Grade Average Math Test Scores vs. (Total Revenue - Total Expenditure)") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
       xlab("Total Revenue - Total Expenditure") + 
