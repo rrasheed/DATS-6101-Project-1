@@ -72,6 +72,36 @@ str(df)
 Exploratory Data Analysis
 -------------------------
 
+Look at total revenue, total expenditure, and average math scores from 2005-2015
+```{r}
+#get total revenue sum, total expenditure sum, and average math scores sum from 2005-2015
+df_tr_te_sum <- aggregate(list(df$total_revenue, df$total_expenditure), by = list(df$year), FUN = sum)
+colnames(df_tr_te_sum) <- c("year", "total_revenue_sum", "total_expenditure_sum")
+df_tr_te_sum <- melt(df_tr_te_sum, id.vars = "year")
+df_avg_score_sum <- aggregate(list(df$avg_score), by = list(df$year), FUN = sum)
+colnames(df_avg_score_sum) <- c("year", "avg_score_sum")
+df_avg_score_sum <- melt(df_avg_score_sum, id.vars = "year")
+#line plot of total revenue sum, total expenditure sum, and average math scores sum from 2005-2015
+ggplot(df_tr_te_sum, aes(x = year, y = value, group = variable, colour = variable)) +
+      geom_line() + 
+      ggtitle ("Total Revenue Sum and Total Expenditure Sum") +
+      theme(plot.title = element_text(hjust = 0.5)) +
+      xlab("Year") +
+      ylab("Value") + 
+      labs(color = "Variable") + 
+      scale_x_continuous(breaks = c(2005, 2007, 2009, 2011, 2013, 2015)) + 
+      scale_color_manual(values = c("darkolivegreen3", "deepskyblue2"))
+ggplot(df_avg_score_sum, aes(x = year, y = value, group = variable, colour = variable)) +
+      geom_line() + 
+      ggtitle ("Average Math Scores Sum") +
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      xlab("Year") +
+      ylab("Value") + 
+      labs(color = "Variable") + 
+      scale_x_continuous(breaks = c(2005, 2007, 2009, 2011, 2013, 2015)) + 
+      scale_color_manual(values = c("darkorchid3"))
+```
+
 Descriptive statistics
 ```{r}
 #describe df
