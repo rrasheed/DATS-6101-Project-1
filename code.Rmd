@@ -11,11 +11,11 @@ Project Overview
 
 Data Source: https://www.kaggle.com/noriuk/us-educational-finances
 
-Research Question: Is there a significant relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015?
+Research Question: Is there a relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015?
 
 Hypotheses:
-H0: There is no significant linear relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015. β1 = 0. 
-HA: There is a significant linear relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015. β1 ≠ 0.
+H0: There is no relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015. β1 = 0. 
+HA: There is a relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015. β1 ≠ 0.
 
 Data Preparation
 ----------------
@@ -233,8 +233,8 @@ df_cor_8
 corrplot(df_cor_8, method = "square", addCoef.col = "black", number.digits = 4, title = "8th Grade")
 
 #all relationships are positive
-#strong positive linear relationship between total revenue and total expenditure
-#weak positive linear relationships between total revenue and average score and total expenditure and average score
+#strong positive relationship between total revenue and total expenditure
+#weak positive relationships between total revenue and average score and total expenditure and average score
 ```
 
 Models
@@ -245,17 +245,20 @@ Linear regression of 4th grade average math scores vs. total expenditure
 #linear regression 4th grade average math scores vs. total expenditure 
 lm_df_4_te <- lm(avg_score ~ total_expenditure, data = df_4)
 summary(lm_df_4_te)
-#coefficients - total_expenditure p-value < 0.05, significant linear relationship between school expenditure and 4th grade average math scores
-#multiple R-squared - 5.659% of the variance in 4th grade average math scores can be explained by school expenditure, poor linear model
-#F-statistic - p-value < 0.05, best-fitting linear model has at least one predictor with non-zero coefficient
+#residuals - not normally distributed
+#coefficients - total_expenditure p-value < 0.05, relationship between school expenditure and 4th grade average math scores
+#adjusted R-squared - 5.324% of the variance in 4th grade average math scores can be explained by school expenditure, poor model
 
 #assumptions
 par(mfrow = c(2, 2))
 plot(lm_df_4_te)
+lm_df_4_te_res <- lm_df_4_te$residuals
+describe(lm_df_4_te_res)
+shapiro.test(lm_df_4_te_res)
 #linearity - linearity, scatterplot shows linear trend and residual vs fitted plot shows residuals skewed to left, spread around nearly horizontal line
-#independence - independence, observations are independent
-#normality - normality, normal Q-Q plot shows that residuals follow straight line well
-#homoscedasticity - possible homoscedasticity, residual vs fitted plot shows residuals skewed to left, spread around slightly negatively sloped line
+#independence of residuals - independence of residuals, observations are independent
+#normality of residuals - no normality of residuals, normal Q-Q plot shows that residuals follow straight line well, Shapiro-Wilk normality test shows p value < 0.05
+#homoscedasticity of residuals - possible homoscedasticity of residuals, residual vs fitted plot shows residuals skewed to left, spread around slightly negatively sloped line
 ```
 
 Linear regression of 8th grade average math scores vs. total expenditure
@@ -263,15 +266,18 @@ Linear regression of 8th grade average math scores vs. total expenditure
 #linear regression 8th grade average math test scores vs. total expenditure
 lm_df_8_te <- lm(avg_score ~ total_expenditure, data = df_8)
 summary(lm_df_8_te)
-#coefficients - total_expenditure p-value < 0.05, significant linear relationship between school expenditure and 8th grade average math scores
-#multiple R-squared - 3.93% of the variance in 8th grade average math scores can be explained by school expenditure, poor linear model
-#F-statistic - p-value < 0.05, best-fitting linear model has at least one predictor with non-zero coefficient
+#residuals - not normally distributed
+#coefficients - total_expenditure p-value < 0.05, relationship between school expenditure and 8th grade average math scores
+#multiple R-squared - 3.59% of the variance in 8th grade average math scores can be explained by school expenditure, poor model
 
 #assumptions
 par(mfrow = c(2, 2))
 plot(lm_df_8_te)
+lm_df_8_te_res <- lm_df_8_te$residuals
+describe(lm_df_8_te_res)
+shapiro.test(lm_df_8_te_res)
 #linearity - linearity, scatterplot shows linear trend and residual vs fitted plot shows residuals skewed to left, spread around nearly horizontal line
-#independence - independence, observations are independent
-#normality - normality, normal Q-Q plot shows that residuals follow straight line well
-#homoscedasticity - possible homoscedasticity, residual vs fitted plot shows residuals skewed to left, spread around slightly negatively sloped line
+#independence of residuals - independence of residuals, observations are independent
+#normality of residuals - no normality of residuals, normal Q-Q plot shows that residuals follow straight line well, Shapiro-Wilk normality test shows p value < 0.05
+#homoscedasticity of residuals - possible homoscedasticity of residuals, residual vs fitted plot shows residuals skewed to left, spread around slightly negatively sloped line
 ```
