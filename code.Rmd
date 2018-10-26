@@ -110,9 +110,10 @@ df_sum_tr_minus_te <- aggregate(list(df$tr_minus_te), by = list(df$year), FUN = 
 colnames(df_sum_tr_minus_te) <- c("year", "sum_total_revenue-total_expenditure")
 df_sum_tr_minus_te <- melt(df_sum_tr_minus_te, id.vars = "year")
 #line plot of sum of total revenue - total expenditure from 2005-2015
+#Profit - Total Revenue - Total Expenditure ----> π = TR-TE
 ggplot(df_sum_tr_minus_te, aes(x = year, y = value, group = variable, colour = variable)) +
       geom_line() + 
-      ggtitle ("Sum of Total Revenue - Total Expenditure") +
+      ggtitle ("Profit from 2005-2015") +
       theme(plot.title = element_text(hjust = 0.5)) +
       xlab("Year") +
       ylab("USD") + 
