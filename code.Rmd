@@ -127,7 +127,6 @@ Descriptive statistics
 #describe df
 describe(df[, 3:5])
 ```
-
 ```{r}
 #summarize df
 summary(df)
@@ -200,7 +199,6 @@ ggplot(df_4, aes(x = total_expenditure, y = avg_score)) +
       ylab("Average Score")
 #linearity
 ```
-
 ```{r}
 #scatter plot of 8th grade average math scores vs. total expenditure
 ggplot(df_8, aes(x = total_expenditure, y = avg_score)) +
