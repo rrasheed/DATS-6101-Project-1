@@ -268,7 +268,7 @@ lm_df_8_te <- lm(avg_score ~ total_expenditure, data = df_8)
 summary(lm_df_8_te)
 #residuals - not normally distributed
 #coefficients - total_expenditure p-value < 0.05, relationship between school expenditure and 8th grade average math scores
-#multiple R-squared - 3.59% of the variance in 8th grade average math scores can be explained by school expenditure, poor model
+#adjusted R-squared - 3.59% of the variance in 8th grade average math scores can be explained by school expenditure, poor model
 
 #assumptions
 par(mfrow = c(2, 2))
