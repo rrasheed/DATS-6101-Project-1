@@ -186,7 +186,7 @@ Look at linearity
 ggplot(df, aes(x = total_expenditure, y = avg_score)) +
       geom_point(shape = 1) +    
       geom_smooth(method = lm, se = FALSE, color = "goldenrod1") + 
-      ggtitle("8th Grade Average Math Test Scores vs. Total Expenditure") + 
+      ggtitle("8th Grade Average Math Scores vs. Total Expenditure") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
       xlab("Total Expenditure (USD (millions))") + 
       ylab("Average Score")
@@ -218,8 +218,8 @@ Linear regression of 8th grade average math scores vs. total expenditure
 df_lm <- lm(avg_score ~ total_expenditure, data = df)
 summary(df_lm)
 #residuals - not normally distributed
-#coefficients - total_expenditure p-value < 0.05, statistically significant relationship between school expenditure and 8th grade average math scores
-#adjusted R-squared - 3.59% of the variance in 8th grade average math scores can be explained by school expenditure, poor model
+#coefficients - total_expenditure p-value < 0.05, statistically significant relationship between education expenditure and 8th grade average math scores
+#adjusted R-squared - 3.59% of the variance in 8th grade average math scores can be explained by education expenditure, poor model
 
 #model assumptions 
 par(mfrow = c(2, 2))
