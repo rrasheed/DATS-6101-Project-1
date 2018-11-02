@@ -1,22 +1,25 @@
 ---
-title: "Education Expenditure and Math Scores"
+title: "Analysis of Education Expenditure and 8th Grade Average Math Scores in the United States from 2005-2015"
+course: DATS 6101 Introduction to Data Science
 authors: Mary Gibbs and Rayhaan Rasheed
 output: html_notebook
 editor_options: 
   chunk_output_type: inline
 ---
 
+----------------
 Project Overview
 ----------------
 
-Data Source: https://www.kaggle.com/noriuk/us-educational-finances
-
-Research Question: Is there a relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015?
+Research Question: Is there a statistically significant relationship between education expenditure and 8th grade average math scores in the U.S. from 2005 to 2015?
 
 Hypotheses:
-H0: There is no relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015. β1 = 0. 
-HA: There is a relationship between school expenditure and 4th/8th grade average math scores in the U.S. from 2005 to 2015. β1 ≠ 0.
+H0: There is no statistically significant relationship between education expenditure and 8th grade average math scores in the U.S. from 2005 to 2015. β1 = 0. 
+HA: There is a statistically significant relationship between education expenditure and 8th grade average math scores in the U.S. from 2005 to 2015. β1 ≠ 0.
 
+Data Source: https://www.kaggle.com/noriuk/us-educational-finances
+
+----------------
 Data Preparation
 ----------------
 
@@ -51,84 +54,87 @@ Clean data
 ```{r}
 #choose columns of interest
 finances <- finances[, c(1, 2, 4, 8)]
-#select 2000 to 2015
-finances <- finances[finances$YEAR > 2004 & finances$YEAR < 2016]
-scores <- scores[scores$YEAR > 2004 & scores$YEAR < 2016]
-#select mathematics
-scores <- scores[scores$TEST_SUBJECT == 'Mathematics']
 #join finances and scores on year and state
 df <- merge(finances, scores, by = c("YEAR", "STATE"))
 #make column names lowercase
 df <- setnames(df, tolower(names(df)))
-#remove rows with avg_score = "-" and avg_score = "‡"
+#select 2005-2015
+df <- df[df$year > 2004 & df$year < 2016]
+#get total revenue in USD (millions)) and total expenditure in USD (millions)
+df$total_revenue <- df$total_revenue/1000000
+df$total_expenditure <- df$total_expenditure/1000000
+#remove rows with avg_score = "-", avg_score = "‡"
 df <- df[df$avg_score != "—" & df$avg_score != "‡"]
-#change avg_score and test_year data types
+#select mathematics
+df <- df[df$test_subject == 'Mathematics']
+#select 8th grade
+df <- df[df$test_year == 8]
+#change year, state, avg_score, and test_year data types
+df$year <- as.factor(df$year)
+df$state <- as.factor(df$state)
 df$avg_score <- as.numeric(df$avg_score, digits = 7)
-df$test_year <- as.factor(df$test_year)
-#check df 
+df$test_year <- as.character(df$test_year)
+#check data frame 
 str(df)
 ```
 
+-------------------------
 Exploratory Data Analysis
 -------------------------
 
-Look at total revenue, total expenditure, and average math scores from 2005-2015
+Look at total revenue, total expenditure, and 8th grade average math scores from 2005-2015
 ```{r}
-#get total revenue sum, total expenditure sum, and average math scores sum from 2005-2015
+#get total revenue sum, total expenditure sum, and 8th grade average math scores sum from 2005-2015
 df_tr_te_sum <- aggregate(list(df$total_revenue, df$total_expenditure), by = list(df$year), FUN = sum)
 colnames(df_tr_te_sum) <- c("year", "total_revenue_sum", "total_expenditure_sum")
 df_tr_te_sum <- melt(df_tr_te_sum, id.vars = "year")
 df_avg_score_sum <- aggregate(list(df$avg_score), by = list(df$year), FUN = sum)
 colnames(df_avg_score_sum) <- c("year", "avg_score_sum")
 df_avg_score_sum <- melt(df_avg_score_sum, id.vars = "year")
-#line plot of total revenue sum, total expenditure sum, and average math scores sum from 2005-2015
+#line plot of total revenue sum, total expenditure sum, and 8th grade average math scores sum from 2005-2015
 ggplot(df_tr_te_sum, aes(x = year, y = value, group = variable, colour = variable)) +
       geom_line() + 
       ggtitle ("Total Revenue Sum and Total Expenditure Sum") +
       theme(plot.title = element_text(hjust = 0.5)) +
       xlab("Year") +
-      ylab("USD") + 
+      ylab("USD (millions)") + 
       labs(color = "Variable") + 
-      scale_x_continuous(breaks = c(2005, 2007, 2009, 2011, 2013, 2015)) + 
       scale_color_manual(values = c("darkolivegreen3", "deepskyblue2"))
 ggplot(df_avg_score_sum, aes(x = year, y = value, group = variable, colour = variable)) +
       geom_line() + 
-      ggtitle ("Average Math Scores Sum") +
+      ggtitle ("8th Grade Average Math Scores Sum") +
       theme(plot.title = element_text(hjust = 0.5)) + 
       xlab("Year") +
-      ylab("Value") + 
+      ylab("Average Scores Sum") + 
       labs(color = "Variable") + 
-      scale_x_continuous(breaks = c(2005, 2007, 2009, 2011, 2013, 2015)) + 
       scale_color_manual(values = c("darkorchid3"))
 ```
 
 Look at sum of total revenue - total expenditure from 2005-2015
 ```{r}
-#get sum of total revenue - total expenditure from 2005 - 2015
+#get sum of total revenue - total expenditure from 2005-2015
 df$tr_minus_te <- df$total_revenue - df$total_expenditure
 df_sum_tr_minus_te <- aggregate(list(df$tr_minus_te), by = list(df$year), FUN = sum)
 colnames(df_sum_tr_minus_te) <- c("year", "sum_total_revenue-total_expenditure")
 df_sum_tr_minus_te <- melt(df_sum_tr_minus_te, id.vars = "year")
 #line plot of sum of total revenue - total expenditure from 2005-2015
-#Profit - Total Revenue - Total Expenditure ----> π = TR-TE
 ggplot(df_sum_tr_minus_te, aes(x = year, y = value, group = variable, colour = variable)) +
       geom_line() + 
       ggtitle ("Sum of Total Revenue - Total Expenditure") +
       theme(plot.title = element_text(hjust = 0.5)) +
       xlab("Year") +
-      ylab("USD") + 
+      ylab("USD (millions)") + 
       labs(color = "Variable") + 
-      scale_x_continuous(breaks = c(2005, 2007, 2009, 2011, 2013, 2015)) + 
       scale_color_manual(values = c("darkorange2"))
 ```
 
 Descriptive statistics
 ```{r}
-#describe df
+#describe data frame
 describe(df[, 3:5])
 ```
 ```{r}
-#summarize df
+#summarize data frame
 summary(df)
 ```
 
@@ -136,11 +142,12 @@ Look at outliers
 ```{r}
 #divide graph area into three columns
 par(mfrow = c(1, 3))  
-#boxplots of total revenue, total expenditure, and average math scores
-boxplot(df$total_revenue, main = "Total Revenue")
-boxplot(df$total_expenditure, main = "Total Expenditure")  
-boxplot(df$avg_score, main = "Average Math Scores")
+#boxplots of total revenue, total expenditure, and 8th grade average math scores
+boxplot(df$total_revenue, main = "Total Revenue", ylab = "USD (millions)")
+boxplot(df$total_expenditure, main = "Total Expenditure", ylab = "USD (millions)")  
+boxplot(df$avg_score, main = "8th Grade Average Math Scores", ylab = "Average Score")
 #total revenue and total expenditure have outliers
+
 #remove total revenue and total expenditure outliers 
 tr_outliers <- boxplot(df$total_revenue, plot = FALSE)$out
 te_outliers <- boxplot(df$total_expenditure, plot = FALSE)$out
@@ -148,135 +155,80 @@ df <- df[!df$total_expenditure %in% c(tr_outliers, te_outliers)]
 #divide graph area into three columns
 par(mfrow = c(1, 2))  
 #boxplots of total revenue (no outliers) and total expenditure (no outliers)
-boxplot(df$total_revenue, main = "Total Revenue (No Outliers)")
-boxplot(df$total_expenditure, main = "Total Expenditure (No Outliers)")
+boxplot(df$total_revenue, main = "Total Revenue (No Outliers)", ylab = "USD (millions)")
+boxplot(df$total_expenditure, main = "Total Expenditure (No Outliers)", ylab = "USD (millions)")
+#total revenue and total expenditure have no outliers
 ```
 
 Look at normality 
 ```{r}
 #divide graph area into three columns
 par(mfrow = c(1, 3))  
-#density plots of total revenue, total expenditure, and average math scores
-plot(density(df$total_revenue), main = "Total Revenue", ylab = "Frequency", col = "darkolivegreen3")
+#density plots of total revenue, total expenditure, and 8th grade average math scores
+plot(density(df$total_revenue), main = "Total Revenue", xlab = "USD (millions)", ylab = "Frequency", col = "darkolivegreen3")
 polygon(density(df$total_revenue), col = "darkolivegreen3")
-plot(density(df$total_expenditure), main = "Total Expenditure", ylab = "Frequency", col = "deepskyblue2")
+plot(density(df$total_expenditure), main = "Total Expenditure", xlab = "USD (millions)", ylab = "Frequency", col = "deepskyblue2")
 polygon(density(df$total_expenditure), col = "deepskyblue2")
-plot(density(df$avg_score), main = "Average Math Scores", ylab = "Frequency", col = "darkorchid3")
+plot(density(df$avg_score), main = "8th Grade Average Math Scores", xlab = "Average Score", ylab = "Frequency", col = "darkorchid3")
 polygon(density(df$avg_score), col = "darkorchid3")
-#total revenue and total expenditure have slight left skew
-#average math scores are bimodal, which might be due to grade level differences
-
-#check if average math scores are bimodal due to grade level differecnes
-df_4 <- df[df$test_year == 4]
-df_8 <- df[df$test_year == 8]
-#divide graph area into two columns
-par(mfrow = c(1, 2))  
-#density plots of 4th grade average math scores and 8th grade average math scores
-plot(density(df_4$avg_score), main = "4th Grade Average Math Scores", ylab = "Frequency", col = "indianred3")
-polygon(density(df_4$avg_score), col = "indianred3")
-plot(density(df_8$avg_score), main = "8th Grade Average Math Scores", ylab = "Frequency", col = "goldenrod1")
-polygon(density(df_8$avg_score), col = "goldenrod1")
-#average math scores are bimodal due to grade level differences
-#treat 4th grade average math scores and 8th grade average math scores separate
+#total revenue and total expenditure have slight left skew, 8th grade average math scores looks normally distributed 
 
 #Shapiro-Wilk normality test
 shapiro.test(df$total_revenue)
 shapiro.test(df$total_expenditure)
-shapiro.test(df_4$avg_score)
-shapiro.test(df_8$avg_score)
-#total revenue, total expenditure, 4th grade average math scores, and 8th grade average math scores have p values < 0.05, samples do not come from a normal distribution
+shapiro.test(df$avg_score)
+#total revenue, total expenditure, and 8th grade average math scores have p values < 0.05, not normally distributed 
 ```
 
 Look at linearity 
 ```{r}
-#scatter plot of 4th grade average math scores vs. total expenditure
-ggplot(df_4, aes(x = total_expenditure, y = avg_score)) +
-      geom_point(shape = 1) +    
-      geom_smooth(method = lm, se = FALSE, color = "indianred3") + 
-      ggtitle("4th Grade Average Math Test Scores vs. Total Expenditure") + 
-      theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
-      ylab("Average Score")
-#linearity
-```
-```{r}
-#scatter plot of 8th grade average math scores vs. total expenditure
-ggplot(df_8, aes(x = total_expenditure, y = avg_score)) +
+#scatter plot 
+ggplot(df, aes(x = total_expenditure, y = avg_score)) +
       geom_point(shape = 1) +    
       geom_smooth(method = lm, se = FALSE, color = "goldenrod1") + 
       ggtitle("8th Grade Average Math Test Scores vs. Total Expenditure") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
-      xlab("Total Expenditure (USD)") + 
+      xlab("Total Expenditure (USD (millions))") + 
       ylab("Average Score")
-#linearity
+#linearity 
 ```
 
 Look at correlations
 ```{r}
-#covariance matrix for 4th grade
-df_cov_4 <- cov(df_4[, 3:5], method = "pearson")
-df_cov_4
-#correlation matrix for 4th grade
-df_cor_4 <- cor(df_4[, 3:5], method = "pearson")
-df_cor_4
-#correlation plot for 4th grade
-corrplot(df_cor_4, method = "square", addCoef.col = "black", number.digits = 4, title = "4th Grade")
-
-##covariance matrix for 8th grade
-df_cov_8 <- cov(df_8[, 3:5], method = "pearson")
-df_cov_8
-#correlation matrix for 8th grade
-df_cor_8 <- cor(df_8[, 3:5], method = "pearson")
-df_cor_8
-#correlation plot for 4th grade
-corrplot(df_cor_8, method = "square", addCoef.col = "black", number.digits = 4, title = "8th Grade")
-
+#covariance matrix 
+df_cov <- cov(df[, 3:5], method = "pearson")
+df_cov
+#correlation matrix 
+df_cor <- cor(df[, 3:5], method = "pearson")
+df_cor
+#correlation plot 
+corrplot(df_cor, method = "square", addCoef.col = "black", number.digits = 4)
 #all relationships are positive
 #strong positive relationship between total revenue and total expenditure
-#weak positive relationships between total revenue and average score and total expenditure and average score
+#weak positive relationships between total revenue and 8th grade average math scores and total expenditure and 8th grade average math scores
 ```
 
-Models
-------
-
-Linear regression of 4th grade average math scores vs. total expenditure
-```{r}
-#linear regression 4th grade average math scores vs. total expenditure 
-lm_df_4_te <- lm(avg_score ~ total_expenditure, data = df_4)
-summary(lm_df_4_te)
-#residuals - not normally distributed
-#coefficients - total_expenditure p-value < 0.05, relationship between school expenditure and 4th grade average math scores
-#adjusted R-squared - 5.324% of the variance in 4th grade average math scores can be explained by school expenditure, poor model
-
-#assumptions
-par(mfrow = c(2, 2))
-plot(lm_df_4_te)
-lm_df_4_te_res <- lm_df_4_te$residuals
-describe(lm_df_4_te_res)
-shapiro.test(lm_df_4_te_res)
-#linearity - linearity, scatterplot shows linear trend and residual vs fitted plot shows residuals skewed to left, spread around nearly horizontal line
-#independence of residuals - independence of residuals, observations are independent
-#normality of residuals - no normality of residuals, normal Q-Q plot shows that residuals follow straight line well, Shapiro-Wilk normality test shows p value < 0.05
-#homoscedasticity of residuals - possible homoscedasticity of residuals, residual vs fitted plot shows residuals skewed to left, spread around slightly negatively sloped line
-```
+-----
+Model
+-----
 
 Linear regression of 8th grade average math scores vs. total expenditure
 ```{r}
-#linear regression 8th grade average math test scores vs. total expenditure
-lm_df_8_te <- lm(avg_score ~ total_expenditure, data = df_8)
-summary(lm_df_8_te)
+#model
+df_lm <- lm(avg_score ~ total_expenditure, data = df)
+summary(df_lm)
 #residuals - not normally distributed
-#coefficients - total_expenditure p-value < 0.05, relationship between school expenditure and 8th grade average math scores
+#coefficients - total_expenditure p-value < 0.05, statistically significant relationship between school expenditure and 8th grade average math scores
 #adjusted R-squared - 3.59% of the variance in 8th grade average math scores can be explained by school expenditure, poor model
 
-#assumptions
+#model assumptions 
 par(mfrow = c(2, 2))
-plot(lm_df_8_te)
-lm_df_8_te_res <- lm_df_8_te$residuals
-describe(lm_df_8_te_res)
-shapiro.test(lm_df_8_te_res)
-#linearity - linearity, scatterplot shows linear trend and residual vs fitted plot shows residuals skewed to left, spread around nearly horizontal line
+plot(df_lm)
+df_lm_res <- df_lm$residuals
+describe(df_lm_res)
+shapiro.test(df_lm_res)
+#linearity - linearity, scatterplot shows linearity, residual vs fitted plot shows residuals skewed to left and spread around nearly horizontal line
 #independence of residuals - independence of residuals, observations are independent
 #normality of residuals - no normality of residuals, normal Q-Q plot shows that residuals follow straight line well, Shapiro-Wilk normality test shows p value < 0.05
-#homoscedasticity of residuals - possible homoscedasticity of residuals, residual vs fitted plot shows residuals skewed to left, spread around slightly negatively sloped line
+#homoscedasticity of residuals - possible homoscedasticity of residuals, residual vs fitted plot shows residuals skewed to left and spread around slightly negatively sloped line
 ```
