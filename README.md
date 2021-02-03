@@ -9,8 +9,10 @@ This project explores an education data set conatining 2 different files. The fi
 This project was assigned for our group to fully understand what steps should be taken for a proper exploratory data analysis(EDA). We merged the two data sets together to create a fianl dataframe that conatined the Total Revenue, Total Expenditure, and Average Test Scores for each state for the past 10 years. Our group focused on the relationship between the money a state spends on education and the average math test scores. 
 
 ## Methods
-* EDA
-* Model
+* Exploratory Data Analysis
+* Hypothesis Testing
+* Shapiro-Wilkes Test
+* Regression Analysis
 
 ## Data
 The data comes from https://www.kaggle.com/noriuk/us-educational-finances
